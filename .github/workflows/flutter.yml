@@ -21,6 +21,9 @@ jobs:
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flutter
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -64,6 +67,9 @@ jobs:
   build-ios:
     name: Build iOS
     runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: flutter
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -89,11 +95,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-app
-          path: build/ios/iphoneos/Runner.app # これはあくまでデフォルトのパスです。必要に応じて修正してください。
+          path: build/ios/iphoneos/Runner.app # 必要に応じて修正
 
   build-web:
     name: Build Web
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flutter
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -124,6 +133,9 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: flutter
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -154,6 +166,9 @@ jobs:
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flutter
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -188,6 +203,9 @@ jobs:
   build-macos:
     name: Build macOS
     runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: flutter
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
