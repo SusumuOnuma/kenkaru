@@ -1,5 +1,5 @@
-# Kizuku Streatch
-The project name is tentative.
+# Kenkaru
+健康を手軽に気軽に『KENKARUケンカル』
 
 ## How to build
 ### Flutter
