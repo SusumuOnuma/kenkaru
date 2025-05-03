@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-appbundle
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: flutter/build/app/outputs/bundle/release/app-release.aab
 
   build-ios:
     name: Build iOS
@@ -160,7 +160,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: build/windows/runner/Release/*.exe
+          path: flutter/build/windows/runner/Release/*.exe
 
   build-linux:
     name: Build Linux
@@ -197,7 +197,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
-          path: build/linux/x64/release/bundle/flutter_application
+          path: flutter/build/linux/x64/release/bundle/flutter_application
 
   build-macos:
     name: Build macOS
@@ -230,4 +230,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: build/macos/Build/Products/Release/flutter_application.app
+          path: flutter/build/macos/Build/Products/Release/flutter_application.app
