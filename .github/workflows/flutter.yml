@@ -84,7 +84,7 @@ jobs:
         run: flutter build ios --release --no-codesign
       - name: Zip iOS .app
         run: |
-          cd flutter/build/ios/iphoneos
+          cd build/ios/iphoneos
           ditto -c -k --sequesterRsrc --keepParent Runner.app Runner.zip
       - name: Upload iOS App
         uses: actions/upload-artifact@v4
@@ -208,7 +208,7 @@ jobs:
         run: flutter build macos
       - name: Zip macOS .app
         run: |
-          cd flutter/build/macos/Build/Products/Release
+          cd build/macos/Build/Products/Release
           ditto -c -k --sequesterRsrc --keepParent flutter_application.app flutter_application.zip
       - name: Upload macOS Build
         uses: actions/upload-artifact@v4
