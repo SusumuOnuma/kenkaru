@@ -82,11 +82,15 @@ jobs:
         run: flutter test
       - name: Build iOS
         run: flutter build ios --release --no-codesign
+      - name: Zip iOS .app
+        run: |
+          cd flutter/build/ios/iphoneos
+          ditto -c -k --sequesterRsrc --keepParent Runner.app Runner.zip
       - name: Upload iOS App
         uses: actions/upload-artifact@v4
         with:
           name: ios-app
-          path: flutter/build/ios/iphoneos/
+          path: flutter/build/ios/iphoneos/Runner.zip
 
   build-web:
     name: Build Web
@@ -144,7 +148,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: flutter/build/windows/x64/runner/Release/
+          path: flutter/build/windows/x64/runner/Release/flutter_application.exe
 
   build-linux:
     name: Build Linux
@@ -202,8 +206,12 @@ jobs:
         run: flutter test
       - name: Build macOS
         run: flutter build macos
+      - name: Zip macOS .app
+        run: |
+          cd flutter/build/macos/Build/Products/Release
+          ditto -c -k --sequesterRsrc --keepParent flutter_application.app flutter_application.zip
       - name: Upload macOS Build
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: flutter/build/macos/Build/Products/Release/
+          path: flutter/build/macos/Build/Products/Release/flutter_application.zip
