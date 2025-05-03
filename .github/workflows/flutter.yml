@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-app
-          path: build/ios/iphoneos/Runner.app # 必要に応じて修正
+          path: flutter/build/ios/iphoneos/Runner.app 
 
   build-web:
     name: Build Web
@@ -127,7 +127,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: web-build
-          path: build/web
+          path: flutter/build/web
 
   build-windows:
     name: Build Windows
@@ -197,7 +197,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
-          path: build/linux/x64/release/bundle/*
+          path: build/linux/x64/release/bundle/flutter_application
 
   build-macos:
     name: Build macOS
@@ -230,4 +230,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: build/macos/build/Release/Runner.app
+          path: build/macos/Build/Products/Release/flutter_application.app
