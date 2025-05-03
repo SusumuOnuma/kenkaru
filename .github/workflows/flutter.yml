@@ -33,10 +33,6 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
-          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
@@ -56,12 +52,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/
       - name: Upload App Bundle
         uses: actions/upload-artifact@v4
         with:
           name: android-appbundle
-          path: flutter/build/app/outputs/bundle/release/app-release.aab
+          path: flutter/build/app/outputs/bundle/release/
 
   build-ios:
     name: Build iOS
@@ -78,10 +74,6 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
-          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
       - name: Get dependencies
         run: flutter pub get
       - name: Analyze project
@@ -94,7 +86,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-app
-          path: flutter/build/ios/iphoneos/Runner.app 
+          path: flutter/build/ios/iphoneos/
 
   build-web:
     name: Build Web
@@ -111,10 +103,6 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
-          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
       - name: Get dependencies
         run: flutter pub get
       - name: Analyze project
@@ -144,10 +132,6 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
-          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
       - name: Get dependencies
         run: flutter pub get
       - name: Analyze project
@@ -160,7 +144,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: flutter/build/windows/runner/Release/*.exe
+          path: flutter/build/windows/runner/Release/
 
   build-linux:
     name: Build Linux
@@ -177,10 +161,6 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
-          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
       - name: Install dependencies
         run: |
           sudo apt-get update -y
@@ -214,10 +194,6 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
-          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
       - name: Get dependencies
         run: flutter pub get
       - name: Analyze project
@@ -230,4 +206,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: flutter/build/macos/Build/Products/Release/flutter_application.app
+          path: flutter/build/macos/Build/Products/Release/
