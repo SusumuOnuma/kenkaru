@@ -18,14 +18,15 @@ import 'package:flutter_login/flutter_login.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class AuthScreen extends StatelessWidget {
-  final PocketBase pb =
-      PocketBase('http://127.0.0.1:8090'); // PocketBase の URL を指定
+  final PocketBase pb = PocketBase('http://127.0.0.1:8090');
 
-  Duration get loginTime => Duration(milliseconds: 2250);
+  AuthScreen({super.key});
+
+  Duration get loginTime => const Duration(milliseconds: 2250);
 
   Future<String?> _authUser(LoginData data) async {
     try {
-      final authData = await pb.collection('users').authWithPassword(
+      final _ = await pb.collection('users').authWithPassword(
             data.name,
             data.password,
           );
