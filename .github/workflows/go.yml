@@ -1,0 +1,39 @@
+# .github/workflows/go-ci.yml
+name: Go CI
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./pocketbase  # すべての run ステップで pocketbase をカレントディレクトリに
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'  # 必要に応じて変更
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build app
+        run: go build -o myapp
+
+      - name: Upload Go App
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-app
+          path: pocketbase/myapp
