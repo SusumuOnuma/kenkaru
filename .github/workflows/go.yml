@@ -1,4 +1,18 @@
-# .github/workflows/go-ci.yml
+# Copyright (C) 2025  SUSUMU ONUMA
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 name: Go CI
 
 on:
@@ -12,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./pocketbase  # すべての run ステップで pocketbase をカレントディレクトリに
+        working-directory: ./pocketbase 
 
     steps:
       - name: Checkout code
@@ -20,8 +34,6 @@ jobs:
 
       - name: Set up Go
         uses: actions/setup-go@v4
-        with:
-          go-version: '1.22'  # 必要に応じて変更
 
       - name: Install dependencies
         run: go mod tidy
