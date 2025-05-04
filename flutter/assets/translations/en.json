@@ -1,0 +1,13 @@
+{
+  "app_title": "My App",
+  "login": "Login",
+  "signup": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "recover_password": "Recover Password",
+  "go_back": "Go Back",
+  "confirm_password_error": "Passwords do not match",
+  "recover_password_description": "Please enter your email to recover your password",
+  "recover_password_success": "Password recovery email sent"
+}
