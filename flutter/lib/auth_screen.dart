@@ -16,9 +16,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AuthScreen extends StatelessWidget {
-  final PocketBase pb = PocketBase('http://127.0.0.1:8090');
+  final pb = PocketBase(const String.fromEnvironment(
+    'POCKETBASE_URL',
+    defaultValue: 'http://127.0.0.1:8090',
+  ));
 
   AuthScreen({super.key});
 
@@ -59,6 +63,18 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: 'My App',
+      messages: LoginMessages(
+        passwordHint: 'password'.tr(),
+        confirmPasswordHint: 'confirm_password'.tr(),
+        loginButton: 'login'.tr(),
+        signupButton: 'signup'.tr(),
+        forgotPasswordButton: 'recover_password'.tr(),
+        recoverPasswordButton: 'recover_password'.tr(),
+        goBackButton: 'go_back'.tr(),
+        confirmPasswordError: 'confirm_password_error'.tr(),
+        recoverPasswordDescription: 'recover_password_description'.tr(),
+        recoverPasswordSuccess: 'recover_password_success'.tr(),
+      ),
       onLogin: _authUser,
       onSignup: _signupUser,
       onRecoverPassword: _recoverPassword,

@@ -1,0 +1,13 @@
+{
+  "app_title": "Mon Application",
+  "login": "Connexion",
+  "signup": "S'inscrire",
+  "email": "Email",
+  "password": "Mot de passe",
+  "confirm_password": "Confirmer le mot de passe",
+  "recover_password": "Récupérer le mot de passe",
+  "go_back": "Retour",
+  "confirm_password_error": "Les mots de passe ne correspondent pas",
+  "recover_password_description": "Veuillez entrer votre email pour récupérer votre mot de passe",
+  "recover_password_success": "Email de récupération de mot de passe envoyé"
+}

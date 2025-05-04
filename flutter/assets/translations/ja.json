@@ -1,0 +1,13 @@
+{
+  "app_title": "マイアプリ",
+  "login": "ログイン",
+  "signup": "新規登録",
+  "email": "メールアドレス",
+  "password": "パスワード",
+  "confirm_password": "パスワード（確認）",
+  "recover_password": "パスワードを回復",
+  "go_back": "戻る",
+  "confirm_password_error": "パスワードが一致しません",
+  "recover_password_description": "パスワードを回復するためにメールアドレスを入力してください",
+  "recover_password_success": "パスワード回復のメールを送信しました"
+}
