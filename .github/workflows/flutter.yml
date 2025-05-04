@@ -15,7 +15,11 @@
 
 name: Flutter Multi-Platform Build
 
-on: [push]
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
 
 jobs:
   build-android:
