@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-name: Go CI
+name: Go CI with Dev Container
 
 on:
   push:
@@ -22,27 +21,21 @@ on:
     branches: [ "*" ]
 
 jobs:
-  build-and-test:
+  devcontainer-ci:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./pocketbase 
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-
-      - name: Install dependencies
-        run: go mod tidy
-
-      - name: Run tests
-        run: go test ./...
-
-      - name: Build app
-        run: go build -o myapp
+      - name: Run Dev Container CI
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: |
+            cd pocketbase
+            go mod tidy
+            go test ./...
+            go build -o myapp
 
       - name: Upload Go App
         uses: actions/upload-artifact@v4
