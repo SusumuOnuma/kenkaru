@@ -42,3 +42,67 @@ jobs:
         with:
           name: go-app
           path: pocketbase/myapp
+
+  deploy:
+    needs: devcontainer-ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: go-app
+          path: ./
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: unnecessary
+          if_key_exists: replace
+
+      - name: Adding Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        run: |
+          set -e
+          echo 'STEP1: chmod +x myapp'
+          chmod +x myapp
+          echo 'STEP2: mkdir -p on remote'
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p /home/${{ secrets.SSH_USERNAME }}/pb"
+
+          echo 'STEP3: check local myapp exists'
+          pwd
+          ls -l myapp
+          echo 'STEP3: scp myapp to remote'
+          scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/pb/
+          echo 'STEP3: check remote myapp exists'
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "ls -l /home/${{ secrets.SSH_USERNAME }}/pb/"
+
+          echo 'STEP4-1: kill old process if running'
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "\
+            PID=\$(ps aux | grep pocketbase | grep -v grep | awk '{print \$2}' | head -n 1); \
+            if [ -n \"\$PID\" ]; then \
+              echo 'Existing PocketBase process (PID: '\$PID') found. Terminating...'; \
+              kill \"\$PID\"; \
+              sleep 5; \
+              if ps -p \"\$PID\" > /dev/null; then \
+                echo 'Process '\$PID' did not terminate gracefully. Forcing kill...'; \
+                kill -9 \"\$PID\"; \
+                sleep 2; \
+              fi; \
+            else \
+              echo 'No PocketBase process found running.'; \
+            fi
+          "
+
+          echo 'STEP4-2: move and chmod'
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mv /home/${{ secrets.SSH_USERNAME }}/pb/myapp /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase"
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "chmod +x /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase"
+
+          echo 'STEP4-3: start new process'
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "nohup /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase serve --dir /home/${{ secrets.SSH_USERNAME }}/pb > /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase.log 2>&1 &"
+
