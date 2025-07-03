@@ -69,16 +69,16 @@ jobs:
       - name: Deploy to VPS
         run: |
           chmod +x myapp
-          scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/root/pb/
+          scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/pb/
           ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
-            if [ ! -d /root/pb ]; then
-              mkdir -p /root/pb
+            if [ ! -d /home/${{ secrets.SSH_USERNAME }}/pb ]; then
+              mkdir -p /home/${{ secrets.SSH_USERNAME }}/pb
             fi
-            if pgrep -f '/root/pb/myapp serve' > /dev/null; then
-              pkill -f '/root/pb/myapp serve'
+            if pgrep -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve' > /dev/null; then
+              pkill -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve'
             fi
-            mv /root/pb/myapp /root/pb/pocketbase
-            chmod +x /root/pb/pocketbase
-            nohup /root/pb/pocketbase serve --dir /root/pb > /root/pb/pocketbase.log 2>&1 &
+            mv /home/${{ secrets.SSH_USERNAME }}/pb/myapp /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase
+            chmod +x /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase
+            nohup /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase serve --dir /home/${{ secrets.SSH_USERNAME }}/pb > /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase.log 2>&1 &
           "
 
