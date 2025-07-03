@@ -77,7 +77,21 @@ jobs:
           scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/pb/
 
           echo 'STEP4-1: kill old process if running'
-          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "if pgrep -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve' > /dev/null; then pkill -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve'; fi"
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "\
+            PID=\$(ps aux | grep pocketbase | grep -v grep | awk '{print \$2}' | head -n 1); \
+            if [ -n \"\$PID\" ]; then \
+              echo 'Existing PocketBase process (PID: '\$PID') found. Terminating...'; \
+              kill \"\$PID\"; \
+              sleep 5; \
+              if ps -p \"\$PID\" > /dev/null; then \
+                echo 'Process '\$PID' did not terminate gracefully. Forcing kill...'; \
+                kill -9 \"\$PID\"; \
+                sleep 2; \
+              fi; \
+            else \
+              echo 'No PocketBase process found running.'; \
+            fi
+          "
 
           echo 'STEP4-2: move and chmod'
           ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mv /home/${{ secrets.SSH_USERNAME }}/pb/myapp /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase"
