@@ -72,8 +72,31 @@ jobs:
           chmod +x myapp
           scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/opt/pocketbase/
           ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} '
-            systemctl stop pocketbase
+            if [ ! -d /opt/pocketbase ]; then
+              sudo mkdir -p /opt/pocketbase
+              sudo chown $USER:$USER /opt/pocketbase
+            fi
+            if [ ! -f /etc/systemd/system/pocketbase.service ]; then
+              sudo tee /etc/systemd/system/pocketbase.service > /dev/null <<EOL
+[Unit]
+Description=PocketBase Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/pocketbase/pocketbase
+Restart=always
+User=$USER
+WorkingDirectory=/opt/pocketbase/
+
+[Install]
+WantedBy=multi-user.target
+EOL
+              sudo systemctl daemon-reload
+              sudo systemctl enable pocketbase
+            fi
+            sudo systemctl stop pocketbase || true
             mv /opt/pocketbase/myapp /opt/pocketbase/pocketbase
             chmod +x /opt/pocketbase/pocketbase
-            systemctl start pocketbase
+            sudo systemctl start pocketbase
           '
