@@ -69,22 +69,23 @@ jobs:
       - name: Deploy to VPS
         run: |
           set -e
+          USERNAME=${{ secrets.SSH_USERNAME }}
           echo 'STEP1: chmod +x myapp'
           chmod +x myapp
           echo 'STEP2: mkdir -p on remote'
-          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p /home/${{ secrets.SSH_USERNAME }}/pb"
+          ssh -p ${{ secrets.SSH_PORT || 22 }} $USERNAME@${{ secrets.SSH_HOST }} "mkdir -p /home/$USERNAME/pb"
           echo 'STEP3: scp myapp to remote'
-          scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/pb/
+          scp -P ${{ secrets.SSH_PORT || 22 }} myapp $USERNAME@${{ secrets.SSH_HOST }}:/home/$USERNAME/pb/
           echo 'STEP4: remote deploy commands'
-          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
+          ssh -p ${{ secrets.SSH_PORT || 22 }} $USERNAME@${{ secrets.SSH_HOST }} "
             echo 'STEP4-1: kill old process if running'
-            if pgrep -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve' > /dev/null; then
-              pkill -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve'
+            if pgrep -f '/home/$USERNAME/pb/myapp serve' > /dev/null; then
+              pkill -f '/home/$USERNAME/pb/myapp serve'
             fi
             echo 'STEP4-2: move and chmod'
-            mv /home/${{ secrets.SSH_USERNAME }}/pb/myapp /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase
-            chmod +x /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase
+            mv /home/$USERNAME/pb/myapp /home/$USERNAME/pb/pocketbase
+            chmod +x /home/$USERNAME/pb/pocketbase
             echo 'STEP4-3: start new process'
-            nohup /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase serve --dir /home/${{ secrets.SSH_USERNAME }}/pb > /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase.log 2>&1 &
+            nohup /home/$USERNAME/pb/pocketbase serve --dir /home/$USERNAME/pb > /home/$USERNAME/pb/pocketbase.log 2>&1 &
           "
 
