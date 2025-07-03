@@ -43,3 +43,42 @@ jobs:
           name: go-app
           path: pocketbase/myapp
 
+  deploy:
+    needs: devcontainer-ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: go-app
+          path: ./
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: unnecessary
+          if_key_exists: replace
+
+      - name: Adding Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        run: |
+          chmod +x myapp
+          scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/opt/pocketbase/
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
+            if [ ! -d /opt/pocketbase ]; then
+              mkdir -p /opt/pocketbase
+            fi
+            if pgrep -f '/opt/pocketbase/myapp serve' > /dev/null; then
+              pkill -f '/opt/pocketbase/myapp serve'
+            fi
+            mv /opt/pocketbase/myapp /opt/pocketbase/pocketbase
+            chmod +x /opt/pocketbase/pocketbase
+            nohup /opt/pocketbase/pocketbase serve --dir /opt/pocketbase > /opt/pocketbase/pocketbase.log 2>&1 &
+          "
+
