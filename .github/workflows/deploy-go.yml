@@ -22,6 +22,7 @@ on:
 
 jobs:
   deploy:
+    needs: devcontainer-ci
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
