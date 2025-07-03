@@ -69,11 +69,9 @@ jobs:
       - name: Deploy to VPS
         run: |
           chmod +x myapp
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p /home/${{ secrets.SSH_USERNAME }}/pb"
           scp -P ${{ secrets.SSH_PORT || 22 }} myapp ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/pb/
           ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
-            if [ ! -d /home/${{ secrets.SSH_USERNAME }}/pb ]; then
-              mkdir -p /home/${{ secrets.SSH_USERNAME }}/pb
-            fi
             if pgrep -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve' > /dev/null; then
               pkill -f '/home/${{ secrets.SSH_USERNAME }}/pb/myapp serve'
             fi
