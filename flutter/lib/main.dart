@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_application/auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
