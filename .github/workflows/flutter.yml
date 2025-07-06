@@ -80,7 +80,6 @@ jobs:
           cache: true
       - name: Setup xcconfig for CI
         run: |
-          cp ios/Flutter/Debug.xcconfig.sample ios/Flutter/Debug.xcconfig
           cp ios/Flutter/Release.xcconfig.sample ios/Flutter/Release.xcconfig
       - name: Get dependencies
         run: flutter pub get
