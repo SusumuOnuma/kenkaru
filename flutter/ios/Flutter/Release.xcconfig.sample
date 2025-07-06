@@ -1,0 +1,5 @@
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+#include "Generated.xcconfig"
+// 各自の環境に合わせてコピーして編集してください
+DEVELOPMENT_TEAM = ABCDEFGHIJ
+PRODUCT_BUNDLE_IDENTIFIER = com.example.app

@@ -16,3 +16,5 @@
 .DS_Store
 pocketbase/pb_data/
 memo/
+# iOS secrets
+**/*.xcconfig
