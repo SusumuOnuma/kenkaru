@@ -18,3 +18,22 @@ pocketbase/pb_data/
 memo/
 # iOS secrets
 **/*.xcconfig
+# Firebase/Google secrets
+flutter/ios/Runner/GoogleService-Info.plist
+flutter/android/app/google-services.json
+flutter/macos/Runner/GoogleService-Info.plist
+flutter/firebase.json
+flutter/lib/firebase_options.dart
+pocketbase/serviceAccountKey.json
+pocketbase/myapp
+# Flutter build & IDE cache
+flutter/build/
+flutter/.dart_tool/
+flutter/.idea/
+flutter/.flutter-plugins
+flutter/.flutter-plugins-dependencies
+# macOS/iOS build cache
+flutter/ios/Flutter/flutter_export_environment.sh
+flutter/macos/Flutter/ephemeral/
+# ローカルDBや個人メモ
+pocketbase/pb_data/

@@ -79,7 +79,7 @@ class AuthScreen extends StatelessWidget {
       onSignup: _signupUser,
       onRecoverPassword: _recoverPassword,
       onSubmitAnimationCompleted: () {
-        // ログイン後の画面遷移など
+        // ログイン後の画面遷移でHomeScreenへ
         Navigator.of(context).pushReplacementNamed('/home');
       },
     );

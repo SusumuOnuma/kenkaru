@@ -104,5 +104,5 @@ jobs:
           ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "chmod +x /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase"
 
           echo 'STEP4-3: start new process'
-          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "nohup /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase serve --dir /home/${{ secrets.SSH_USERNAME }}/pb > /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase.log 2>&1 &"
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "nohup sudo /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase serve ${{ secrets.HOST_DOMAIN }} --dir /home/${{ secrets.SSH_USERNAME }}/pb > /home/${{ secrets.SSH_USERNAME }}/pb/pocketbase.log 2>&1 &"
 

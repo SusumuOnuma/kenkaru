@@ -42,6 +42,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Setup dummy google-services.json for CI
+        run: |
+          if [ ! -f android/app/google-services.json ]; then
+            cp android/app/google-services.json.sample android/app/google-services.json
+          fi
       - name: Get dependencies
         run: flutter pub get
       - name: Analyze project
@@ -72,12 +77,19 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+      - name: Set Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         id: flutter-action
         with:
           channel: stable
           cache: true
+      - name: Setup dummy GoogleService-Info.plist for CI
+        run: |
+          if [ ! -f ios/Runner/GoogleService-Info.plist ]; then
+            cp ios/Runner/GoogleService-Info.plist.sample ios/Runner/GoogleService-Info.plist
+          fi
       - name: Setup xcconfig for CI
         run: |
           cp ios/Flutter/Release.xcconfig.sample ios/Flutter/Release.xcconfig
@@ -199,6 +211,13 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+      - name: Setup dummy GoogleService-Info.plist for CI
+        run: |
+          if [ ! -f macos/Runner/GoogleService-Info.plist ]; then
+            cp macos/Runner/GoogleService-Info.plist.sample macos/Runner/GoogleService-Info.plist
+          fi
+      - name: Set Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         id: flutter-action
