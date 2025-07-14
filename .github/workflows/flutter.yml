@@ -36,7 +36,6 @@ jobs:
         id: flutter-action
         with:
           channel: stable
-          flutter-version: '3.29.0'
           cache: true
       - name: Set up Java JDK
         uses: actions/setup-java@v4
