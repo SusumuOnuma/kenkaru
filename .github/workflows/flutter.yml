@@ -42,6 +42,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Setup dummy google-services.json for CI
+        run: |
+          if [ ! -f android/app/google-services.json ]; then
+            cp android/app/google-services.json.sample android/app/google-services.json
+          fi
       - name: Get dependencies
         run: flutter pub get
       - name: Analyze project
