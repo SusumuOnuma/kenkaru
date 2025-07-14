@@ -2,12 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-/// main.dart等から呼び出せる通知テスト用ウィジェット
 class NotificationTestWidget extends StatefulWidget {
-  const NotificationTestWidget({Key? key}) : super(key: key);
+  const NotificationTestWidget({super.key});
 
   @override
-  _NotificationTestWidgetState createState() => _NotificationTestWidgetState();
+  State<NotificationTestWidget> createState() => _NotificationTestWidgetState();
 }
 
 class _NotificationTestWidgetState extends State<NotificationTestWidget> {
@@ -21,13 +20,13 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
   }
 
   Future<void> _initFCM() async {
-    debugPrint('[NotificationTestWidget] _initFCM start');
+    // debugPrint('[NotificationTestWidget] _initFCM start');
     // Firebase初期化（main.dart側で未初期化の場合も考慮）
     try {
       await Firebase.initializeApp();
-      debugPrint('[NotificationTestWidget] Firebase initialized');
+      // debugPrint('[NotificationTestWidget] Firebase initialized');
     } catch (e) {
-      debugPrint('[NotificationTestWidget] Firebase already initialized or error: $e');
+      // debugPrint('[NotificationTestWidget] Firebase already initialized or error: $e');
     }
 
     // iOS/Android両対応で通知許可を明示的にリクエスト
@@ -41,6 +40,7 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
     } catch (e) {
       debugPrint('[NotificationTestWidget] FCM token error: $e');
     }
+    if (!mounted) return; // async gap対策
     setState(() {
       _token = token;
     });
@@ -55,7 +55,8 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
 
     // フォアグラウンド通知リスナー
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('[NotificationTestWidget] Foreground message: ${message.messageId}, data: ${message.data}, notification: ${message.notification}');
+      debugPrint(
+          '[NotificationTestWidget] Foreground message: ${message.messageId}, data: ${message.data}, notification: ${message.notification}');
       setState(() {
         _message = 'フォアグラウンド通知: '
             '${message.notification?.title ?? 'タイトルなし'} - '
@@ -67,8 +68,7 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
 
   Future<void> _requestNotificationPermission() async {
     final messaging = FirebaseMessaging.instance;
-    debugPrint('[NotificationTestWidget] requestPermission start');
-    NotificationSettings settings = await messaging.requestPermission(
+    await messaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -77,25 +77,22 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
       provisional: false,
       sound: true,
     );
-    debugPrint('[NotificationTestWidget] User granted permission: ${settings.authorizationStatus}');
-
     // iOS: 許可ダイアログが出ない場合はUNUserNotificationCenterも明示的にリクエスト
+    if (!mounted) return; // async gap対策（await後にcontextを使う前に必ずチェック）
     if (Theme.of(context).platform == TargetPlatform.iOS) {
       try {
-        final plugin = await messaging.getNotificationSettings();
-        debugPrint('[NotificationTestWidget] iOS notification settings: $plugin');
+        await messaging.getNotificationSettings();
       } catch (e) {
-        debugPrint('[NotificationTestWidget] iOS notification settings error: $e');
+        // debugPrint('[NotificationTestWidget] iOS notification settings error: $e');
       }
     }
-    debugPrint('[NotificationTestWidget] requestPermission end');
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('FCM Token: \\n' + (_token ?? '取得中...')),
+        Text('FCM Token: \n${_token ?? '取得中...'}'),
         SizedBox(height: 20),
         Text('受信メッセージ: $_message'),
       ],
@@ -106,7 +103,7 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
 // バックグラウンドメッセージハンドラ（トップレベル関数）
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print('バックグラウンドでメッセージを受信しました: [32m${message.messageId}[0m');
+  debugPrint('バックグラウンドでメッセージを受信しました: ${message.messageId}');
 }
 
 void main() async {
@@ -117,8 +114,10 @@ void main() async {
 }
 
 class NotificationTestApp extends StatefulWidget {
+  const NotificationTestApp({super.key});
+
   @override
-  _NotificationTestAppState createState() => _NotificationTestAppState();
+  State<NotificationTestApp> createState() => _NotificationTestAppState();
 }
 
 class _NotificationTestAppState extends State<NotificationTestApp> {
@@ -142,24 +141,27 @@ class _NotificationTestAppState extends State<NotificationTestApp> {
       provisional: false,
       sound: true,
     );
-    print('User granted permission: ${settings.authorizationStatus}');
+    debugPrint('User granted permission: ${settings.authorizationStatus}');
     String? token = await FirebaseMessaging.instance.getToken();
+    if (!mounted) return;
     setState(() {
       _token = token;
     });
-    print('FCM Token: $_token');
+    debugPrint('FCM Token: $_token');
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      if (!mounted) return;
       setState(() {
         _token = newToken;
       });
-      print('FCM Token refreshed: $newToken');
+      debugPrint('FCM Token refreshed: $newToken');
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('フォアグラウンドでメッセージを受信しました: ${message.messageId}');
-      print('メッセージデータ: ${message.data}');
+      if (!mounted) return;
+      debugPrint('フォアグラウンドでメッセージを受信しました: ${message.messageId}');
+      debugPrint('メッセージデータ: ${message.data}');
       if (message.notification != null) {
-        print('メッセージ通知タイトル: ${message.notification!.title}');
-        print('メッセージ通知本文: ${message.notification!.body}');
+        debugPrint('メッセージ通知タイトル: ${message.notification!.title}');
+        debugPrint('メッセージ通知本文: ${message.notification!.body}');
       }
       setState(() {
         _message =
@@ -170,11 +172,11 @@ class _NotificationTestAppState extends State<NotificationTestApp> {
         .getInitialMessage()
         .then((RemoteMessage? message) {
       if (message != null) {
-        print('アプリが終了状態から通知で開かれました: ${message.messageId}');
+        debugPrint('アプリが終了状態から通知で開かれました: ${message.messageId}');
       }
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('アプリがバックグラウンドから通知で開かれました: ${message.messageId}');
+      debugPrint('アプリがバックグラウンドから通知で開かれました: ${message.messageId}');
     });
   }
 
@@ -189,7 +191,6 @@ class _NotificationTestAppState extends State<NotificationTestApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 既存の配信テスト画面テキスト
               Text(
                 "ケンカル\n配信テスト画面",
                 textAlign: TextAlign.center,
@@ -200,8 +201,7 @@ class _NotificationTestAppState extends State<NotificationTestApp> {
                 ),
               ),
               SizedBox(height: 32),
-              // 通知テスト情報
-              Text('FCM Token: $_token'),
+              Text('FCM Token: ${_token ?? ''}'),
               SizedBox(height: 20),
               Text('受信メッセージ: $_message'),
             ],

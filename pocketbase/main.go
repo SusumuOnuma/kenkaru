@@ -31,11 +31,16 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+	"strings"
+
+	_ "myapp/migrations"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 	"google.golang.org/api/option"
 )
 
@@ -59,6 +64,15 @@ func init() {
 
 func main() {
 	app := pocketbase.New()
+
+	isGoRun := strings.HasPrefix(os.Args[0], os.TempDir())
+
+	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
+		Automigrate: isGoRun,
+	})
+
+	// 通知送信Cronを登録
+	RegisterSendNotificationsCron(app, fcmClient)
 
 	// PocketBaseのサーバーが起動する前にカスタムAPIルートを追加します
 	app.OnServe().BindFunc(func(e *core.ServeEvent) error {

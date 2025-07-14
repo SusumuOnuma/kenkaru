@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_application/notification_test.dart';
+import 'package:flutter_application/auth_screen.dart';
+import 'package:flutter_application/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,30 +34,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('ケンカル 配信テスト'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "ケンカル\n配信テスト画面",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
-                ),
+      // ルート設定: ログイン後はHomeScreenに遷移
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Scaffold(
+              appBar: AppBar(
+                title: Text('ケンカル 配信テスト'),
               ),
-              SizedBox(height: 32),
-              // 通知テストウィジェットを追加
-              NotificationTestWidget(),
-            ],
-          ),
-        ),
-      ),
+              body: AuthScreen(),
+            ),
+        '/home': (context) => const HomeScreen(),
+      },
+// HomeScreenはhome_screen.dartに分離
     );
   }
 }
