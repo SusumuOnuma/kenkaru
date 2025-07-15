@@ -34,9 +34,39 @@ class AuthScreen extends StatelessWidget {
             data.name,
             data.password,
           );
+      // ログイン成功後に動画通知をスケジュール
+      await _scheduleVideoNotification();
       return null; // 成功時は null を返す
     } catch (e) {
       return 'ログインに失敗しました: ${e.toString()}';
+    }
+  }
+
+  Future<void> _scheduleVideoNotification() async {
+    try {
+      // 1. ファイルトークン取得
+      final fileToken = await pb.files.getToken();
+      // 2. 動画レコード取得
+      final record = await pb.collection('videos').getOne('m32x53yhl908bv0');
+      // 3. ProtectedファイルURL生成
+      final videoUrl = pb.files
+          .getURL(record, record.getStringValue('file'), token: fileToken);
+      // 4. notificationsに1分後の通知を追加
+      final now = DateTime.now();
+      final scheduledAt = now.add(Duration(minutes: 1));
+      final userId = pb.authStore.model.id;
+      await pb.collection('notifications').create(body: {
+        'user': userId,
+        'title': '新着動画',
+        'body': '動画を再生してみましょう',
+        'video_url': videoUrl,
+        'scheduled_at': scheduledAt.toIso8601String(),
+        'sent': false,
+        'read': false,
+      });
+    } catch (e) {
+      // エラー時はログ出力のみ（UIには表示しない）
+      debugPrint('動画通知スケジュール失敗: $e');
     }
   }
 

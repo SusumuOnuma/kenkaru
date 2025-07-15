@@ -44,19 +44,22 @@ func RegisterSendNotificationsCron(app *pocketbase.PocketBase, fcmClient *messag
 			}
 			for _, tokenRec := range tokens {
 				token := tokenRec.GetString("token")
-				msg := &messaging.Message{
-					Notification: &messaging.Notification{
-						Title: rec.GetString("title"),
-						Body:  rec.GetString("body"),
-					},
-					Token: token,
-				}
-				_, err := fcmClient.Send(context.Background(), msg)
-				if err != nil {
-					log.Printf("Failed to send FCM: %v", err)
-					continue
-				}
-				log.Printf("Sent FCM to %s", token)
+			   msg := &messaging.Message{
+				   Notification: &messaging.Notification{
+					   Title: rec.GetString("title"),
+					   Body:  rec.GetString("body"),
+				   },
+				   Token: token,
+				   Data: map[string]string{
+					   "video_url": rec.GetString("video_url"),
+				   },
+			   }
+			   _, err := fcmClient.Send(context.Background(), msg)
+			   if err != nil {
+				   log.Printf("Failed to send FCM: %v", err)
+				   continue
+			   }
+			   log.Printf("Sent FCM to %s", token)
 			}
 			rec.Set("sent", true)
 			rec.Set("sent_at", time.Now())
