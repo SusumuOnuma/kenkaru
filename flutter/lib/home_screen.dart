@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'pb_instance.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:flutter/foundation.dart'; // 不要なため削除
@@ -33,8 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _token = fcmToken;
     });
-    final pb = PocketBase(const String.fromEnvironment('POCKETBASE_URL',
-        defaultValue: 'http://127.0.0.1:8090'));
+    // グローバルPocketBaseインスタンスを利用
     if (pb.authStore.isValid) {
       try {
         final record = await pb.collection('fcm_tokens').create(body: {

@@ -15,16 +15,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'pb_instance.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AuthScreen extends StatelessWidget {
-  final pb = PocketBase(const String.fromEnvironment(
-    'POCKETBASE_URL',
-    defaultValue: 'http://127.0.0.1:8090',
-  ));
-
-  AuthScreen({super.key});
+  const AuthScreen({super.key});
 
   Duration get loginTime => const Duration(milliseconds: 2250);
 
