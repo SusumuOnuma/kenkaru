@@ -54,7 +54,7 @@ class AuthScreen extends StatelessWidget {
       // 4. notificationsに1分後の通知を追加
       final now = DateTime.now();
       final scheduledAt = now.add(Duration(minutes: 1));
-      final userId = pb.authStore.model.id;
+      final userId = pb.authStore.record?.id;
       await pb.collection('notifications').create(body: {
         'user': userId,
         'title': '新着動画',
