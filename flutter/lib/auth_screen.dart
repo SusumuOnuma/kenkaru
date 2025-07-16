@@ -15,16 +15,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'pb_instance.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AuthScreen extends StatelessWidget {
-  final pb = PocketBase(const String.fromEnvironment(
-    'POCKETBASE_URL',
-    defaultValue: 'http://127.0.0.1:8090',
-  ));
-
-  AuthScreen({super.key});
+  const AuthScreen({super.key});
 
   Duration get loginTime => const Duration(milliseconds: 2250);
 
@@ -34,9 +29,40 @@ class AuthScreen extends StatelessWidget {
             data.name,
             data.password,
           );
+      // ログイン成功後に動画通知をスケジュール
+      await _scheduleVideoNotification();
       return null; // 成功時は null を返す
     } catch (e) {
       return 'ログインに失敗しました: ${e.toString()}';
+    }
+  }
+
+  Future<void> _scheduleVideoNotification() async {
+    try {
+      // 1. ファイルトークン取得
+      final fileToken = await pb.files.getToken();
+      // 2. 動画レコード取得
+      final record = await pb.collection('videos').getOne('m32x53yhl908bv0');
+      // 3. ProtectedファイルURL生成
+      final videoUrl = pb.files
+          .getURL(record, record.getStringValue('file'), token: fileToken)
+          .toString();
+      // 4. notificationsに1分後の通知を追加
+      final now = DateTime.now();
+      final scheduledAt = now.add(Duration(minutes: 1));
+      final userId = pb.authStore.record?.id;
+      await pb.collection('notifications').create(body: {
+        'user': userId,
+        'title': '新着動画',
+        'body': '動画を再生してみましょう',
+        'video_url': videoUrl,
+        'scheduled_at': scheduledAt.toIso8601String(),
+        'sent': false,
+        'read': false,
+      });
+    } catch (e) {
+      // エラー時はログ出力のみ（UIには表示しない）
+      debugPrint('動画通知スケジュール失敗: $e');
     }
   }
 
