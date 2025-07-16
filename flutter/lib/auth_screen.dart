@@ -45,7 +45,8 @@ class AuthScreen extends StatelessWidget {
       final record = await pb.collection('videos').getOne('m32x53yhl908bv0');
       // 3. ProtectedファイルURL生成
       final videoUrl = pb.files
-          .getURL(record, record.getStringValue('file'), token: fileToken);
+          .getURL(record, record.getStringValue('file'), token: fileToken)
+          .toString();
       // 4. notificationsに1分後の通知を追加
       final now = DateTime.now();
       final scheduledAt = now.add(Duration(minutes: 1));
